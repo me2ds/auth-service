@@ -10,7 +10,8 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const httpApp = await NestFactory.create<NestFastifyApplication>(
   	AppModule, 
-   	new FastifyAdapter()
+   	new FastifyAdapter(),
+    { cors: true }
   );
   
   const configService = httpApp.get<ConfigService>(ConfigService)
