@@ -26,10 +26,24 @@ export class AuthService {
 	}
 	
 	async google(code: string) {
-		
-	}
-	
-	async telegram(code: string) {
-		
+		const clientId = this.configService.get("GOOGLE_CLIENT_ID")
+		const clientSecret = this.configService.get("GOOGLE_CLIENT_SECRET")
+		const callbackUrl = this.configService.get("GOOGLE_CALLBACK_URL")
+		const googleApiUrl = "https://oauth2.googleapis.com/token"
+		const authResponse = await fetch(googleApiUrl, {
+			method: "post",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				code,
+				client_id: clientId,
+				client_secret: clientSecret,
+				grant_type: "authorization_code",
+				redirect_uri: callbackUrl,
+			})
+		})
+		const { id_token } = await authResponse.json()
+		return { token: id_token }
 	}
 }

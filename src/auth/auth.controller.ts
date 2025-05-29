@@ -10,4 +10,9 @@ export class AuthController {
 	async githubLogin(@Req() request: Request) {
 		return this.authService.github(request.body.code)
   }
+  
+  @Post('google')
+  async googleLogin(@Req() request: Request) {
+  	return this.authService.google(request.body.code)
+  }
 }
