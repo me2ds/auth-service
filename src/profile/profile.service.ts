@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from "google-auth-library" // has deprecated punycode
+import { OAuth2Client } from "google-auth-library"
 
 @Injectable()
 export class ProfileService {
@@ -47,5 +47,4 @@ export class ProfileService {
 			}
 		}
 	}
-
 }
