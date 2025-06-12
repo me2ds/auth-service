@@ -15,10 +15,8 @@ services:
   # PostgreSQL
   db:
     image: postgres:latest
-    environment:
-    - POSTGRES_DB=${POSTGRES_DB}
-    - POSTGRES_USER=${POSTGRES_USER}
-    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
