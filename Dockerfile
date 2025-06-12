@@ -6,7 +6,7 @@ COPY package*.json ./
 COPY .env* ./
 COPY tsconfig.json ./tsconfig.json
 
-RUN bun install --dev
+RUN bun install
 
 COPY . .
 
@@ -21,6 +21,6 @@ COPY --from=builder /app/bun.lock ./bun.lock
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/.env* ./
 
-EXPOSE 3000
+EXPOSE 8000
 
 CMD ["node", "dist/main"]

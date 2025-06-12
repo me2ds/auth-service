@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@/user/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { OAuth2Client } from "google-auth-library";
 
@@ -42,6 +42,7 @@ export class AuthService {
 		})
 		
 		const profile = await profileResponse.json()
+    console.log(profile)
     const user = await this.userRepository.findOne({
       where: {
         authIds: profile.id,
@@ -55,10 +56,10 @@ export class AuthService {
       })
       await this.userRepository.save(newUser)
       const jwtToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
-      return { token: jwtToken }
+      return { jwtToken }
     }
     const jwtToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
-    return { token: jwtToken }
+    return { jwtToken }
 	}
 	
 	async google(code: string) {
@@ -99,9 +100,9 @@ export class AuthService {
       })
       await this.userRepository.save(newUser)
       const jwtToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
-      return { token: jwtToken }
+      return { jwtToken }
     }
     const jwtToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
-    return { token: jwtToken }
+    return { jwtToken }
 	}
 }
