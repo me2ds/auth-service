@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -37,17 +37,17 @@ export class AuthService {
     const profileResponse = await fetch(this.githubApiUrl, {
 			method: "get",
 			headers: {
-				Authorization: accessToken,
-			}
+				Authorization: `Bearer ${accessToken}`,
+			},
 		})
-		
 		const profile = await profileResponse.json()
-    console.log(profile)
-    const user = await this.userRepository.findOne({
-      where: {
-        authIds: profile.id,
-      }
-    })
+    if (!profile) {
+      throw new UnauthorizedException("Invalid github code")
+    }
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where(":id = ANY(user.authIds)", { id: profile.id })
+      .getOne()
     if (!user) {
       const newUser = this.userRepository.create({
         authIds: [profile.id],
@@ -55,11 +55,11 @@ export class AuthService {
         avatar: profile.avatar_url,
       })
       await this.userRepository.save(newUser)
-      const jwtToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
-      return { jwtToken }
+      const authToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
+      return { authToken }
     }
-    const jwtToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
-    return { jwtToken }
+    const authToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
+    return { authToken }
 	}
 	
 	async google(code: string) {
@@ -86,23 +86,21 @@ export class AuthService {
 			audience: clientId
 		})
 		const profile = ticket.getPayload()
-    const user = await this.userRepository.findOne({
-      where: {
-        authIds: profile?.at_hash,
-      }
-    })
-    console.log(profile)
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where(":id = ANY(user.authIds)", { id: profile?.email })
+      .getOne()
     if (!user) {
       const newUser = this.userRepository.create({
-        authIds: [profile?.at_hash || ""],
-        username: profile?.name || "",
-        avatar: profile?.picture || "",
+        authIds: [profile?.email || ""],
+        username: profile?.name,
+        avatar: profile?.picture,
       })
       await this.userRepository.save(newUser)
-      const jwtToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
-      return { jwtToken }
+      const authToken = this.jwtService.sign({ id: newUser.id, authToken: accessToken })
+      return { authToken }
     }
-    const jwtToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
-    return { jwtToken }
+    const authToken = this.jwtService.sign({ id: user.id, authToken: accessToken })
+    return { authToken }
 	}
 }

@@ -12,6 +12,6 @@ export class User {
   @Column()
   username: string
 
-  @Column()
+  @Column({ nullable: true })
   avatar: string
 }

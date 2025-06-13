@@ -22,7 +22,7 @@ import { User } from './user/entity/user.entity';
 				entities: [User],
 				synchronize: true, // отключить в production
 			}),
-		})
+		}),
   ],
 })
 export class ConfigAppModule {}
