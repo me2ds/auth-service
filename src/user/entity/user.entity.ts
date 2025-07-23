@@ -1,17 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
-
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Playlist } from "../../playlist/entities/playlist.entity";
+import { Composition } from '../../composition/entities/composition.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string
+  id: string;
 
   @Column('text', { array: true })
-  authIds: string[]
+  authIds: string[];
 
   @Column()
-  username: string
+  username: string;
 
   @Column({ nullable: true })
-  avatar: string
+  avatar: string;
+
+  @OneToMany(() => Playlist, (playlist) => playlist.owner)
+  playlists: Playlist[];
+
+  @OneToMany(() => Composition, (composition) => composition.owner)
+  compositions: Composition[];
 }
