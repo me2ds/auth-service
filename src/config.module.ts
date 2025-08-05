@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from './user/entity/user.entity';
 import { Playlist } from './playlist/entities/playlist.entity';
 import { Composition } from './composition/entities/composition.entity';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -30,6 +32,15 @@ import { Composition } from './composition/entities/composition.entity';
         signOptions: { expiresIn: '1h' },
       }),
       global: true,
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        store: redisStore,
+        url: configService.get<string>('REDIS_URL'),
+        isGlobal: true,
+      }),
     }),
   ],
 })
