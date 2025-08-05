@@ -39,8 +39,8 @@ import * as redisStore from 'cache-manager-redis-store';
       useFactory: (configService: ConfigService) => ({
         store: redisStore,
         url: configService.get<string>('REDIS_URL'),
-        isGlobal: true,
       }),
+      isGlobal: true,
     }),
   ],
 })
