@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { User } from './user/entity/user.entity';
 import { Playlist } from './playlist/entities/playlist.entity';
 import { Composition } from './composition/entities/composition.entity';
@@ -25,6 +26,15 @@ import { Composition } from './composition/entities/composition.entity';
 				synchronize: true, // отключить в production
 			}),
 		}),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
+      }),
+      global: true,
+    }),
   ],
 })
 export class ConfigAppModule {}

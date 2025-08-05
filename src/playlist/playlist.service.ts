@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Playlist } from './entities/playlist.entity';
 import { Composition } from '../composition/entities/composition.entity';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
@@ -17,27 +17,27 @@ export class PlaylistService {
 
   async create(createPlaylistDto: CreatePlaylistDto): Promise<Playlist> {
     const playlist = this.playlistRepository.create(createPlaylistDto);
-    const savedPlaylist = await this.playlistRepository.save(playlist);
-    return savedPlaylist;
+    await this.playlistRepository.save(playlist);
+    return this.findOne(playlist.id);
   }
 
   async findAll(): Promise<Playlist[]> {
     return await this.playlistRepository.find({
-      relations: ['owner', 'compositions'],
+      relations: ['compositions'],
     });
   }
 
   async findByOwnerId(ownerId: string): Promise<Playlist[]> {
-    return await this.playlistRepository.find({
+    return this.playlistRepository.find({
       where: { ownerId },
-      relations: ['owner', 'compositions'],
+      relations: ['compositions'],
     });
   }
 
   async findOne(id: string): Promise<Playlist> {
     const playlist = await this.playlistRepository.findOne({
       where: { id },
-      relations: ['owner', 'compositions'],
+      relations: ['compositions'],
     });
 
     if (!playlist) {
@@ -59,7 +59,7 @@ export class PlaylistService {
     }
     
     Object.assign(playlist, updatePlaylistDto);
-    return await this.playlistRepository.save(playlist);
+    return this.playlistRepository.save(playlist);
   }
 
   async addCompositionToPlaylist(
@@ -89,7 +89,7 @@ export class PlaylistService {
 
     if (!hasComposition) {
       playlist.compositions.push(composition);
-      return await this.playlistRepository.save(playlist);
+      return this.playlistRepository.save(playlist);
     }
 
     return playlist;
@@ -110,7 +110,7 @@ export class PlaylistService {
       (comp) => comp.id !== compositionId,
     );
 
-    return await this.playlistRepository.save(playlist);
+    return this.playlistRepository.save(playlist);
   }
 
   async remove(id: string, userId: string): Promise<void> {

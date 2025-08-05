@@ -20,22 +20,18 @@ export class CompositionService {
   }
 
   async findAll(): Promise<Composition[]> {
-    return await this.compositionRepository.find({
-      relations: ['owner'],
-    });
+    return await this.compositionRepository.find();
   }
 
   async findByOwnerId(ownerId: string): Promise<Composition[]> {
     return await this.compositionRepository.find({
       where: { ownerId },
-      relations: ['owner'],
     });
   }
 
   async findOne(id: string): Promise<Composition> {
     const composition = await this.compositionRepository.findOne({
       where: { id },
-      relations: ['owner'],
     });
 
     if (!composition) {
