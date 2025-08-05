@@ -16,15 +16,11 @@ import { Composition } from './composition/entities/composition.entity';
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => ({
-				type: 'postgres',
-				host: configService.get<string>('POSTGRES_HOST'),
-				port: configService.get<number>('POSTGRES_PORT'),
-				username: configService.get<string>('POSTGRES_USER'),
-				password: configService.get<string>('POSTGRES_PASSWORD'),
-				database: configService.get<string>('POSTGRES_DB'),
-				entities: [User, Playlist, Composition],
-				synchronize: true, // отключить в production
-			}),
+        type: "postgres",
+        url: configService.get<string>('DATABASE_URL'),
+        entities: [User, Playlist, Composition],
+        synchronize: true,
+      }),
 		}),
     JwtModule.registerAsync({
       imports: [ConfigModule],
