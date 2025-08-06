@@ -13,7 +13,7 @@ import { CreateCompositionDto } from './dto/create-composition.dto';
 import { UpdateCompositionDto } from './dto/update-composition.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { User } from 'src/user/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 
 @Controller('composition')
 @UseGuards(JwtAuthGuard)

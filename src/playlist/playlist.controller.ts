@@ -13,7 +13,7 @@ import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { User } from 'src/user/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 
 @Controller('playlist')
 @UseGuards(JwtAuthGuard)
