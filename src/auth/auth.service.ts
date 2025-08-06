@@ -9,7 +9,6 @@ import { OAuth2Client } from "google-auth-library";
 @Injectable()
 export class AuthService {
   private githubApiUrl = "https://api.github.com/user"
-  private OAuthClient = new OAuth2Client()
 	constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -66,22 +65,13 @@ export class AuthService {
 		const clientId = this.configService.get<string>("GOOGLE_CLIENT_ID")
 		const clientSecret = this.configService.get<string>("GOOGLE_CLIENT_SECRET")
 		const callbackUrl = this.configService.get<string>("GOOGLE_CALLBACK_URL")
-		const googleApiUrl = "https://oauth2.googleapis.com/token"
-		const authResponse = await fetch(googleApiUrl, {
-			method: "post",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				code,
-				client_id: clientId,
-				client_secret: clientSecret,
-				grant_type: "authorization_code",
-				redirect_uri: callbackUrl,
-			})
-		})
-		const { id_token: accessToken } = await authResponse.json()
-		const ticket = await this.OAuthClient.verifyIdToken({
+    const OAuthClient = new OAuth2Client(clientId, clientSecret, callbackUrl)
+		const { tokens } = await OAuthClient.getToken(code)
+    if (!tokens) {
+      throw new UnauthorizedException("Invalid google code")
+    }
+    const accessToken = tokens.id_token!
+		const ticket = await OAuthClient.verifyIdToken({
 			idToken: accessToken,
 			audience: clientId
 		})
