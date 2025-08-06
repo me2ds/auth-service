@@ -19,7 +19,7 @@ export class AuthService {
 	
 	async github(code: string) {
 		const profileRes = await fetch(this.authServiceUrl + "/github", {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ code }),
     })
     if (!profileRes.ok) throw new UnauthorizedException()
@@ -44,7 +44,7 @@ export class AuthService {
 	
 	async google(code: string) {
 		const profileRes = await fetch(this.authServiceUrl + "/google", {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ code }),
     })
     if (!profileRes.ok) throw new UnauthorizedException()
