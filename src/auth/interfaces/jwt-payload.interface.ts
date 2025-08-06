@@ -1,4 +1,5 @@
+import { User } from "src/user/entity/user.entity";
+
 export interface JwtPayload {
-  id: string;
-  authToken: string;
+  user: User
 }

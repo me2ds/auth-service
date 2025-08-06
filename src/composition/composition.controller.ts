@@ -13,7 +13,7 @@ import { CreateCompositionDto } from './dto/create-composition.dto';
 import { UpdateCompositionDto } from './dto/update-composition.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { User } from 'src/user/entity/user.entity';
 
 @Controller('composition')
 @UseGuards(JwtAuthGuard)
@@ -23,7 +23,7 @@ export class CompositionController {
   @Post()
   create(
     @Body() createCompositionDto: CreateCompositionDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.compositionService.create({
       ...createCompositionDto,
@@ -42,7 +42,7 @@ export class CompositionController {
   }
 
   @Get('my')
-  findMyCompositions(@CurrentUser() user: JwtPayload) {
+  findMyCompositions(@CurrentUser() user: User) {
     return this.compositionService.findByOwnerId(user.id);
   }
 
@@ -50,7 +50,7 @@ export class CompositionController {
   update(
     @Param('id') id: string,
     @Body() updateCompositionDto: UpdateCompositionDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.compositionService.update(id, updateCompositionDto, user.id);
   }
@@ -58,7 +58,7 @@ export class CompositionController {
   @Delete(':id')
   remove(
     @Param('id') id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.compositionService.remove(id, user.id);
   }

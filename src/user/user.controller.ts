@@ -13,8 +13,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { UserService } from './user.service';
+import { User } from './entity/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -22,7 +22,7 @@ export class UserController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getMyProfile(@CurrentUser() user: JwtPayload) {
+  async getMyProfile(@CurrentUser() user: User) {
     return this.userService.findOne(user.id);
   }
 
@@ -45,14 +45,14 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(
     @Body() updateUserDto: UpdateUserDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.userService.updateProfile(user.id, updateUserDto);
   }
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async deleteProfile(@CurrentUser() user: JwtPayload) {
+  async deleteProfile(@CurrentUser() user: User) {
     return this.userService.deleteProfile(user.id);
   }
 }

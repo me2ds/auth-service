@@ -13,7 +13,7 @@ import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { User } from 'src/user/entity/user.entity';
 
 @Controller('playlist')
 @UseGuards(JwtAuthGuard)
@@ -23,7 +23,7 @@ export class PlaylistController {
   @Post()
   create(
     @Body() createPlaylistDto: CreatePlaylistDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.playlistService.create({
       ...createPlaylistDto,
@@ -42,7 +42,7 @@ export class PlaylistController {
   }
 
   @Get('my')
-  findMyPlaylists(@CurrentUser() user: JwtPayload) {
+  findMyPlaylists(@CurrentUser() user: User) {
     return this.playlistService.findByOwnerId(user.id);
   }
 
@@ -50,7 +50,7 @@ export class PlaylistController {
   update(
     @Param('id') id: string,
     @Body() updatePlaylistDto: UpdatePlaylistDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.playlistService.update(id, updatePlaylistDto, user.id);
   }
@@ -59,7 +59,7 @@ export class PlaylistController {
   addCompositionToPlaylist(
     @Param('id') id: string,
     @Param('compositionId') compositionId: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.playlistService.addCompositionToPlaylist(id, compositionId, user.id);
   }
@@ -68,7 +68,7 @@ export class PlaylistController {
   removeCompositionFromPlaylist(
     @Param('id') id: string,
     @Param('compositionId') compositionId: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.playlistService.removeCompositionFromPlaylist(
       id,
@@ -80,7 +80,7 @@ export class PlaylistController {
   @Delete(':id')
   remove(
     @Param('id') id: string,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: User,
   ) {
     return this.playlistService.remove(id, user.id);
   }
