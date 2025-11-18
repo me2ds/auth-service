@@ -48,16 +48,17 @@ export class AuthService {
       .where(":id = ANY(user.authIds)", { id: profile.id })
       .getOne()
     if (!user) {
+      console.log(profile)
       const newUser = this.userRepository.create({
         authIds: [profile.id],
         username: profile.login,
         avatar: profile.avatar_url,
       })
       await this.userRepository.save(newUser)
-      const authToken = this.jwtService.sign({ user: newUser })
+      const authToken = this.jwtService.sign({ id: newUser.id })
       return { authToken }
     }
-    const authToken = this.jwtService.sign({ user })
+    const authToken = this.jwtService.sign({ id: user.id })
     return { authToken }
 	}
 	
@@ -87,10 +88,10 @@ export class AuthService {
         avatar: profile?.picture,
       })
       await this.userRepository.save(newUser)
-      const authToken = this.jwtService.sign({ user: newUser })
+      const authToken = this.jwtService.sign({ id: newUser.id })
       return { authToken }
     }
-    const authToken = this.jwtService.sign({ user })
+    const authToken = this.jwtService.sign({ id: user.id })
     return { authToken }
 	}
 }

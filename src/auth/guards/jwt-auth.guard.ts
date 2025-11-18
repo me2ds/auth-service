@@ -3,10 +3,17 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { RequestWithUser } from '../interfaces/request-with-user.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../../user/entity/user.entity';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestWithUser>();
@@ -17,7 +24,11 @@ export class JwtAuthGuard implements CanActivate {
     }
     
     try {
-      const { user } = await this.jwtService.verifyAsync<JwtPayload>(token);
+      const { id } = await this.jwtService.verifyAsync<JwtPayload>(token);
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
       request.user = user;
     } catch (error) {
       throw new UnauthorizedException('Invalid JWT token');
