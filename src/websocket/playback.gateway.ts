@@ -103,7 +103,7 @@ export class PlaybackGateway
     if (!this.roomUsers.has(data.roomId)) {
       this.roomUsers.set(data.roomId, new Set());
     }
-    this.roomUsers.get(data.roomId).add(userSocket.userId);
+    this.roomUsers.get(data.roomId)!.add(userSocket.userId);
 
     client.join(data.roomId);
 

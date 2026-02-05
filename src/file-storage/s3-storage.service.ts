@@ -19,13 +19,13 @@ export class S3StorageService {
 
   constructor(private configService: ConfigService) {
     this.region = this.configService.get<string>('AWS_REGION', 'us-east-1');
-    this.bucketName = this.configService.get<string>('AWS_S3_BUCKET');
+    this.bucketName = this.configService.get<string>('AWS_S3_BUCKET') || '';
 
     const endpoint = this.configService.get<string>('AWS_ENDPOINT_URL');
-    const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
-    const secretAccessKey = this.configService.get<string>(
-      'AWS_SECRET_ACCESS_KEY',
-    );
+    const accessKeyId =
+      this.configService.get<string>('AWS_ACCESS_KEY_ID') || '';
+    const secretAccessKey =
+      this.configService.get<string>('AWS_SECRET_ACCESS_KEY') || '';
 
     if (!this.bucketName) {
       throw new Error('AWS_S3_BUCKET is not configured');
