@@ -21,7 +21,7 @@ import * as redisStore from 'cache-manager-redis-store';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         entities: [User, Playlist, Composition],
-        synchronize: false,
+        synchronize: true,
         ssl: {
           rejectUnauthorized: false,
         },
