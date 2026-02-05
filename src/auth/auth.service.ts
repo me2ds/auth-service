@@ -46,11 +46,11 @@ export class AuthService {
 			},
 		})
     if (!profileResponse.ok) {
-      throw new UnauthorizedException("Invalid github code")
+      throw new UnauthorizedException(`Invalid github code ${profileResponse.statusText}`)
     }
 		const profile = await profileResponse.json()
     if (!profile || !profile.id) {
-      throw new UnauthorizedException("Invalid github profile")
+      throw new UnauthorizedException(`Invalid github profile ${JSON.stringify(profile)}`)
     }
     const user = await this.userRepository
       .createQueryBuilder('user')
@@ -59,7 +59,7 @@ export class AuthService {
     if (!user) {
       const newUser = this.userRepository.create({
         authIds: [String(profile.id)],
-        username: String(profile.login) ?? `github_user_${profile.id}`,
+        username: String(profile.login) ?? `github_user_${String(profile.id)}`,
         avatar: profile.avatar_url,
       })
       await this.userRepository.save(newUser)
