@@ -15,15 +15,18 @@ import * as redisStore from 'cache-manager-redis-store';
       envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({
-        type: "postgres",
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         entities: [User, Playlist, Composition],
-        synchronize: true,
+        synchronize: false,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
-		}),
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -45,3 +48,4 @@ import * as redisStore from 'cache-manager-redis-store';
   ],
 })
 export class ConfigAppModule {}
+
