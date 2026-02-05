@@ -6,6 +6,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { User } from './user/entity/user.entity';
 import { Playlist } from './playlist/entities/playlist.entity';
 import { Composition } from './composition/entities/composition.entity';
+import { Room } from './rooms/entities/room.entity';
+import { Message } from './messages/entities/message.entity';
+import { PlaybackHistory } from './playback-history/entities/playback-history.entity';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -20,7 +23,7 @@ import * as redisStore from 'cache-manager-redis-store';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
-        entities: [User, Playlist, Composition],
+        entities: [User, Playlist, Composition, Room, Message, PlaybackHistory],
         synchronize: true,
         // ssl: {
         //   rejectUnauthorized: false,

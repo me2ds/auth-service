@@ -1,0 +1,17 @@
+apiVersion: v2
+name: desme-audio
+description: Collaborative audio player backend API
+type: application
+version: 1.0.0
+appVersion: '1.0.0'
+keywords:
+  - audio
+  - streaming
+  - collaboration
+  - websocket
+home: https://github.com/me2ds/desme-audio
+sources:
+  - https://github.com/me2ds/desme-audio
+maintainers:
+  - name: Ivan Lylin
+    email: ivan@desme.app

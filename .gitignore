@@ -54,3 +54,26 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Kubernetes generated manifests
+k8s/dist/
+k8s/*.js
+k8s/*.d.ts
+k8s/cdk.out/
+
+# Helm temporary files
+helm/**/.helm-values-*.yaml
+helm/**/Chart.lock
+
+# cdk8s generated files
+cdk.out/
+
+# Vercel build output
+.vercel/
+
+# Build artifacts
+*.tgz
+*.tar.gz
+
+# bun
+bun.lockb

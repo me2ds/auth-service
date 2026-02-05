@@ -1,8 +1,7 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cache } from 'cache-manager';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -19,15 +18,43 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: ['friends', 'playlists'],
+    });
   }
 
   async findOne(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['friends', 'playlists', 'compositions'],
+    });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
     return user;
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+      relations: ['friends', 'playlists'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with username ${username} not found`);
+    }
+    return user;
+  }
+
+  async searchUsers(query: string, limit: number = 20): Promise<User[]> {
+    return this.userRepository.find({
+      where: [
+        {
+          username: Like(`%${query}%`),
+        },
+      ],
+      take: limit,
+      relations: ['friends'],
+    });
   }
 
   async updateProfile(
@@ -38,7 +65,7 @@ export class UserService {
 
     Object.assign(user, updateUserDto);
     const updatedUser = await this.userRepository.save(user);
-    
+
     return updatedUser;
   }
 

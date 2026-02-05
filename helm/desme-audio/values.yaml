@@ -1,0 +1,128 @@
+# Helm Chart Values - Desme Audio API
+# Usage: helm install desme-audio ./helm/desme-audio -f helm/desme-audio/values.yaml
+
+replicaCount: 3
+
+image:
+  repository: desme-audio-api
+  pullPolicy: IfNotPresent
+  tag: 'latest'
+
+imagePullSecrets: []
+nameOverride: ''
+fullnameOverride: 'desme-audio-api'
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ''
+
+podAnnotations:
+  prometheus.io/scrape: 'true'
+  prometheus.io/port: '9090'
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+  annotations: {}
+
+ingress:
+  enabled: true
+  className: 'nginx'
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/rate-limit: '100'
+  hosts:
+    - host: api.desme.app
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: desme-audio-tls
+      hosts:
+        - api.desme.app
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 256m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - desme-audio-api
+          topologyKey: kubernetes.io/hostname
+
+env:
+  NODE_ENV: production
+  LOG_LEVEL: info
+  STORAGE_TYPE: s3
+  AWS_REGION: us-west-2
+  RATE_LIMIT_WINDOW_MS: '900000'
+  RATE_LIMIT_MAX_REQUESTS: '100'
+  COMPOSITION_PAGE_SIZE: '20'
+  HISTORY_PAGE_SIZE: '50'
+
+secrets:
+  JWT_SECRET: ''
+  AWS_ACCESS_KEY_ID: ''
+  AWS_SECRET_ACCESS_KEY: ''
+  DATABASE_URL: ''
+  REDIS_URL: ''
+  GITHUB_CLIENT_ID: ''
+  GITHUB_CLIENT_SECRET: ''
+  DISCORD_CLIENT_ID: ''
+  DISCORD_CLIENT_SECRET: ''
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
