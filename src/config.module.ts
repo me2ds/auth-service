@@ -22,9 +22,9 @@ import * as redisStore from 'cache-manager-redis-store';
         url: configService.get<string>('DATABASE_URL'),
         entities: [User, Playlist, Composition],
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
       }),
     }),
     JwtModule.registerAsync({
@@ -48,4 +48,3 @@ import * as redisStore from 'cache-manager-redis-store';
   ],
 })
 export class ConfigAppModule {}
-
