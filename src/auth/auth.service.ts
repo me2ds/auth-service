@@ -39,6 +39,9 @@ export class AuthService {
 				Authorization: `Bearer ${accessToken}`,
 			},
 		})
+    if (!profileResponse.ok) {
+      throw new UnauthorizedException("Invalid github code")
+    }
 		const profile = await profileResponse.json()
     if (!profile) {
       throw new UnauthorizedException("Invalid github code")
@@ -48,7 +51,6 @@ export class AuthService {
       .where(":id = ANY(user.authIds)", { id: profile.id })
       .getOne()
     if (!user) {
-      console.log(profile)
       const newUser = this.userRepository.create({
         authIds: [profile.id],
         username: profile.login,
