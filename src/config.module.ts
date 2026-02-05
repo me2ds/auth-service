@@ -9,7 +9,6 @@ import { Composition } from './composition/entities/composition.entity';
 import { Room } from './rooms/entities/room.entity';
 import { Message } from './messages/entities/message.entity';
 import { PlaybackHistory } from './playback-history/entities/playback-history.entity';
-import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -25,9 +24,9 @@ import * as redisStore from 'cache-manager-redis-store';
         url: configService.get<string>('DATABASE_URL'),
         entities: [User, Playlist, Composition, Room, Message, PlaybackHistory],
         synchronize: true,
-        // ssl: {
-        //   rejectUnauthorized: false,
-        // },
+        ssl: configService.get<string>('NODE_ENV') === 'production' ? {
+          rejectUnauthorized: false,
+        } : false,
       }),
     }),
     JwtModule.registerAsync({
@@ -39,14 +38,9 @@ import * as redisStore from 'cache-manager-redis-store';
       }),
       global: true,
     }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        store: redisStore,
-        url: configService.get<string>('REDIS_URL'),
-      }),
+    CacheModule.register({
       isGlobal: true,
+      ttl: 300,
     }),
   ],
 })

@@ -28,7 +28,8 @@ export class S3StorageService {
       this.configService.get<string>('AWS_SECRET_ACCESS_KEY') || '';
 
     if (!this.bucketName) {
-      throw new Error('AWS_S3_BUCKET is not configured');
+      this.logger.warn('AWS_S3_BUCKET is not configured, S3 storage disabled');
+      return;
     }
 
     const s3Config: any = {
@@ -51,6 +52,9 @@ export class S3StorageService {
     file: Express.Multer.File,
     folder: 'avatars' | 'banners' | 'audio',
   ): Promise<string> {
+    if (!this.bucketName) {
+      throw new BadRequestException('S3 storage is not configured');
+    }
     try {
       const fileExtension = this.getFileExtension(file.originalname);
       const filename = `${folder}/${uuidv4()}${fileExtension}`;
@@ -81,6 +85,9 @@ export class S3StorageService {
   }
 
   async deleteFile(filePath: string): Promise<void> {
+    if (!this.bucketName) {
+      throw new BadRequestException('S3 storage is not configured');
+    }
     try {
       // Extract key from URL
       const key = filePath.includes('http')
