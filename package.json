@@ -5,7 +5,6 @@
   "author": "Ivan Lylin",
   "private": true,
   "license": "UNLICENSED",
-  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "build:bun": "bun build --target=bun src/main.ts --outdir=dist",

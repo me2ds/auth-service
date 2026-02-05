@@ -9,17 +9,10 @@ import { RoomsModule } from './rooms/rooms.module';
 import { FriendsModule } from './friends/friends.module';
 import { MessagesModule } from './messages/messages.module';
 import { PlaybackHistoryModule } from './playback-history/playback-history.module';
-import { WebSocketModule } from './websocket/websocket.module';
 import { SyncModule } from './sync/sync.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/uploads',
-    }),
     ConfigAppModule,
     AuthModule,
     UserModule,
@@ -30,7 +23,6 @@ import { join } from 'path';
     FriendsModule,
     MessagesModule,
     PlaybackHistoryModule,
-    WebSocketModule,
     SyncModule,
   ],
 })
