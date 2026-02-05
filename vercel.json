@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": "bun run build:bun",
   "installCommand": "bun install --production",
-  "framework": "other",
   "regions": ["iad1", "cdg1", "hnd1"],
   "crons": [
     {
@@ -20,7 +19,7 @@
       "src": "dist/main.js",
       "use": "@vercel/node",
       "config": {
-        "maxDuration": 30,
+        "maxDuration": 10,
         "memory": 1024
       }
     }
